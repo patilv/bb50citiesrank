@@ -14,7 +14,35 @@ shinyServer(function(input, output) {
   # An increment to the hit counter saved in global server environment.
   SP$npers <<- SP$npers+1
   
-#  creating temp dataset with two new variables
+
+  # Convenience interface to gvisMotionChart that allows to set default columns: Courtesy: Sebastian Kranz: http://stackoverflow.com/questions/10258970/default-variables-for-a-googlevis-motionchart
+  myMotionChart = function(df,idvar=colnames(df)[1],timevar=colnames(df)[2],xvar=colnames(df)[3],yvar=colnames(df)[4], colorvar=colnames(df)[5], sizevar = colnames(df)[6],...) {
+    library(googleVis)
+    
+    # Generate a constant variable as column for time if not provided
+    # Unfortunately the motion plot still shows 1900...
+    if (is.null(timevar)) {
+      .TIME.VAR = rep(0,NROW(df))
+      df = cbind(df,.TIME.VAR)
+      timevar=".TIME.VAR"
+    }
+    
+    # Transform booleans into 0 and 1 since otherwise an error will be thrown
+    for (i in  1:NCOL(df)) {
+      if (is.logical(df [,i])[1])
+        df[,i] = df[,i]*1
+    }
+    
+    # Rearrange columns in order to have the desired default values for
+    # xvar, yvar, colorvar and sizevar
+    firstcols = c(idvar,timevar,xvar,yvar,colorvar,sizevar)
+    colorder = c(firstcols, setdiff(colnames(df),firstcols))
+    df = df[,colorder]
+    
+    gvisMotionChart(df,idvar=idvar,timevar=timevar,...)
+  }
+  
+  #  creating temp dataset with two new variables
  
   Bcities<-bcities
   
@@ -47,7 +75,7 @@ shinyServer(function(input, output) {
   #So, have it give larger bubbles for better cities by creating the new "Rankreordered" variable.
   
   output$scatterplot <- renderGvis({
-    gvisMotionChart(Bcities, idvar="City", timevar="Year",xvar="Percent.unemployed",yvar="Percent.with.Graduate.Degree",sizevar="RankReordered",colorvar="City",
+    myMotionChart(Bcities, idvar="City", timevar="Year",xvar="Percent.unemployed",yvar="Percent.with.Graduate.Degree",sizevar="RankReordered",colorvar="City",
                     options=list(showSidePanel=FALSE,showSelectListComponent=FALSE,showXScalePicker=FALSE,
                                  showYScalePicker=FALSE
                                  
