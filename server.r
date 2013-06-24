@@ -16,7 +16,7 @@ shinyServer(function(input, output) {
 
   # Convenience interface to gvisMotionChart that allows to set default columns: Courtesy: Sebastian Kranz: http://stackoverflow.com/questions/10258970/default-variables-for-a-googlevis-motionchart
   myMotionChart = function(df,idvar=colnames(df)[1],timevar=colnames(df)[2],xvar=colnames(df)[3],yvar=colnames(df)[4], colorvar=colnames(df)[5], sizevar = colnames(df)[6],...) {
-    library(googleVis)
+  
     
     # Generate a constant variable as column for time if not provided
     # Unfortunately the motion plot still shows 1900...
