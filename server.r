@@ -1,7 +1,6 @@
-
 library("shiny")
 suppressPackageStartupMessages(library(googleVis))
-library("ggplot2")
+
 
 #loading dataset
 load('bcities.rda')
